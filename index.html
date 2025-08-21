@@ -1,979 +1,442 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Genz.xyz | Meme Analytics Platform</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="icon" href="genz.webp" type="image/webp">
-  
+
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+
   <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
-  
-  <!-- TradingView Lightweight Charts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <!-- TradingView Lightweight Charts (jika dipakai) -->
   <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
-  
+
   <style>
-  :root {
-    --primary-color: #00ddeb; /* Neon blue like Mobyscreener */
-    --secondary-color: #7c4dff; /* Neon purple */
-    --accent-color: #00ff9d; /* Neon green */
-    --success-color: #00ff9d;
-    --danger-color: #ff4d4d;
-    --warning-color: #ffab00;
-    --dark-bg: #0a0e1a; /* Darker background */
-    --card-bg: rgba(20, 25, 40, 0.9);
-    --glass-bg: rgba(255, 255, 255, 0.05);
-    --text-primary: #ffffff;
-    --text-secondary: #b0b8cc;
-    --border-color: rgba(255, 255, 255, 0.1);
-  }
-
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  body {
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, #0a0e1a 0%, #1c2526 100%);
-    color: var(--text-primary);
-    min-height: 100vh;
-    position: relative;
-    overflow-x: hidden;
-    font-size: 16px;
-  }
-
-  /* Animated Background */
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at 30% 70%, rgba(0, 221, 235, 0.2) 0%, transparent 50%);
-    z-index: -2;
-  }
-
-  /* Floating Particles */
-  .particles {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: -1;
-  }
-
-  .particle {
-    position: absolute;
-    width: 2px;
-    height: 2px;
-    background: var(--primary-color);
-    border-radius: 50%;
-    animation: float 15s infinite linear;
-  }
-
-  @keyframes float {
-    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-    10% { opacity: 0.8; }
-    90% { opacity: 0.8; }
-    100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
-  }
-
-  /* Glassmorphism */
-  .glass {
-    background: var(--glass-bg);
-    backdrop-filter: blur(15px);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-  }
-
-  /* Top Navigation */
-  .top-bar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    padding: 1rem 2rem;
-    background: var(--dark-bg);
-    backdrop-filter: blur(15px);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .logo-link {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-decoration: none;
-  }
-
-  .logo-img {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    box-shadow: 0 0 12px var(--primary-color);
-  }
-
-  .logo-title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary-color);
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-  }
-
-  .social-badge {
-    padding: 0.5rem 1rem;
-    background: var(--glass-bg);
-    border-radius: 20px;
-    color: var(--text-primary);
-    text-decoration: none;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
-  }
-
-  .social-badge:hover {
-    background: var(--primary-color);
-    color: var(--dark-bg);
-    transform: translateY(-2px);
-  }
-
-  /* Language Switcher */
-  .language-selector {
-    position: relative;
-    display: inline-block;
-  }
-
-  .language-toggle {
-    padding: 0.5rem 1rem;
-    background: var(--glass-bg);
-    border-radius: 20px;
-    color: var(--text-primary);
-    cursor: pointer;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s ease;
-  }
-
-  .language-toggle:hover {
-    background: var(--primary-color);
-    color: var(--dark-bg);
-  }
-
-  .language-dropdown {
-    display: none;
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    min-width: 100px;
-    z-index: 101;
-  }
-
-  .language-dropdown.show {
-    display: block;
-  }
-
-  .language-option {
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    color: var(--text-primary);
-    font-size: 0.9rem;
-    transition: background 0.3s ease;
-  }
-
-  .language-option:hover {
-    background: var(--primary-color);
-    color: var(--dark-bg);
-  }
-
-  /* Trending Ribbon */
-  .data-ribbon {
-    background: var(--dark-bg);
-    padding: 0.75rem 2rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    position: relative;
-  }
-
-  .ribbon-tag {
-    background: var(--primary-color);
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--dark-bg);
-  }
-
-  .ribbon-container {
-    flex: 1;
-    overflow-x: auto;
-    white-space: nowrap;
-    scroll-behavior: smooth;
-    padding: 0.5rem 0;
-  }
-
-  .ribbon-container::-webkit-scrollbar {
-    height: 6px;
-  }
-
-  .ribbon-container::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
-    border-radius: 10px;
-  }
-
-  .trending-token {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background: var(--glass-bg);
-    border-radius: 10px;
-    margin-right: 0.75rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-
-  .trending-token:hover {
-    background: var(--primary-color);
-    color: var(--dark-bg);
-    transform: translateY(-2px);
-  }
-
-  .trending-logo {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-  }
-
-  .trending-symbol {
-    font-weight: 600;
-    font-size: 0.9rem;
-  }
-
-  .trending-change {
-    font-size: 0.8rem;
-  }
-
-  .slider-controls {
-    display: flex;
-    gap: 0.5rem;
-  }
-
-  .slider-btn {
-    background: var(--glass-bg);
-    border: none;
-    color: var(--text-primary);
-    padding: 0.5rem;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    min-width: 40px;
-    min-height: 40px;
-  }
-
-  .slider-btn:hover {
-    background: var(--primary-color);
-    color: var(--dark-bg);
-  }
-
-  /* Main Layout */
-  .main-layout {
-    display: flex;
-    gap: 1.5rem;
-    max-width: 1600px;
-    margin: 0 auto;
-    padding: 1.5rem;
-  }
-
-  .container {
-    flex: 2;
-  }
-
-  /* Live Chart Panel */
-  .live-chart-panel {
-    flex: 1;
-    background: var(--glass-bg);
-    backdrop-filter: blur(15px);
-    border-radius: 10px;
-    padding: 1.5rem;
-    position: sticky;
-    top: 100px;
-    height: fit-content;
-  }
-
-  .live-chart-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    text-align: center;
-    cursor: pointer;
-    color: var(--primary-color);
-  }
-
-  .live-chart-container {
-    width: 100%;
-    height: 300px;
-  }
-
-  .token-selector {
-    margin-bottom: 1rem;
-    position: relative;
-  }
-
-  .token-dropdown {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    max-height: 200px;
-    overflow-y: auto;
-    z-index: 100;
-  }
-
-  .token-dropdown.show {
-    display: block;
-  }
-
-  .token-dropdown-item {
-    padding: 0.75rem;
-    cursor: pointer;
-    color: var(--text-primary);
-    transition: background 0.3s ease;
-    font-size: 0.9rem;
-  }
-
-  .token-dropdown-item:hover {
-    background: var(--primary-color);
-    color: var(--dark-bg);
-  }
-
-  /* Toolbar */
-  .toolbar {
-    margin-bottom: 1.5rem;
-  }
-
-  .filter-group {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-  }
-
-  .filter-btn {
-    padding: 0.75rem 1.5rem;
-    background: var(--glass-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    color: var(--text-primary);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
-
-  .filter-btn:hover {
-    background: var(--primary-color);
-    color: var(--dark-bg);
-    transform: translateY(-2px);
-  }
-
-  .filter-btn.active {
-    background: var(--primary-color);
-    color: var(--dark-bg);
-    box-shadow: 0 0 10px var(--primary-color);
-  }
-
-  .filter-btn.premium {
-    background: linear-gradient(135deg, var(--warning-color), #ff6b6b);
-  }
-
-  .badge {
-    background: var(--primary-color);
-    padding: 0.3rem 0.6rem;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    color: var(--dark-bg);
-  }
-
-  /* Data Grid */
-.data-grid {
-  background: var(--glass-bg);
-  backdrop-filter: blur(15px);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  margin-bottom: 2rem;
-}
-
-.grid-header {
-  display: grid;
-  grid-template-columns: 60px 2.5fr 1.2fr 1.2fr 1.5fr 1.5fr 1.2fr 1fr 80px;
-  gap: 0.75rem;
-  padding: 1.2rem 1.5rem;
-  background: var(--card-bg);
-  border-bottom: 1px solid var(--border-color);
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  align-items: center;
-}
-
-.grid-header > div {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 0.5rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.header-rank,
-.token-number {
-  justify-content: center;
-}
-
-.header-price,
-.header-change,
-.header-volume,
-.header-mcap,
-.header-liq {
-  justify-content: flex-end;
-}
-
-.header-social,
-.header-chart {
-  justify-content: center;
-}
-
-.sortable {
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.sortable:hover {
-  color: var(--primary-color);
-}
-
-.sortable i {
-  margin-left: 0.3rem;
-  font-size: 0.8rem;
-}
-
-.token-row {
-  display: grid;
-  grid-template-columns: 60px 2.5fr 1.2fr 1.2fr 1.5fr 1.5fr 1.2fr 1fr 80px;
-  gap: 0.75rem;
-  padding: 1.2rem 1.5rem;
-  border-bottom: 1px solid var(--border-color);
-  align-items: center;
-  transition: background 0.3s ease, transform 0.2s ease;
-}
-
-.token-row:hover {
-  background: rgba(0, 221, 235, 0.15);
-  transform: translateX(4px);
-}
-
-.token-info {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem;
-  overflow: hidden;
-}
-
-.token-info img {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-.token-info img:hover {
-  transform: scale(1.1);
-}
-
-.token-info > div {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.token-symbol {
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.token-price,
-.token-change,
-.token-volume,
-.token-fdv,
-.token-liq {
-  text-align: right;
-  padding: 0.5rem;
-  white-space: nowrap;
-}
-
-.positive-change {
-  color: var(--success-color);
-}
-
-.negative-change {
-  color: var(--danger-color);
-}
-
-.social-icons {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
-}
-
-.social-icons i {
-  cursor: pointer;
-  transition: color 0.3s ease, transform 0.3s ease;
-  font-size: 1rem;
-}
-
-.social-icons i:hover {
-  color: var(--primary-color);
-  transform: scale(1.2);
-}
-
-.chart-button {
-  text-align: center;
-  padding: 0.5rem;
-}
-
-.chart-button i {
-  cursor: pointer;
-  transition: color 0.3s ease, transform 0.3s ease;
-  font-size: 1rem;
-}
-
-.chart-button i:hover {
-  color: var(--primary-color);
-  transform: scale(1.2);
-}
-
-.grid-body {
-  max-height: 70vh;
-  overflow-y: auto;
-}
-
-.grid-body::-webkit-scrollbar {
-  width: 6px;
-}
-
-.grid-body::-webkit-scrollbar-thumb {
-  background: var(--primary-color);
-  border-radius: 10px;
-}
-
-/* Responsive Design */
-@media (max-width: 992px) {
-  .grid-header,
-  .token-row {
-    grid-template-columns: 60px 2.5fr 1.2fr 1.2fr 1.5fr 80px;
-  }
-  .grid-header > div:nth-child(6),
-  .grid-header > div:nth-child(7),
-  .token-row > div:nth-child(6),
-  .token-row > div:nth-child(7) {
-    display: none;
-  }
-  .header-price,
-  .header-change,
-  .header-volume,
-  .token-price,
-  .token-change,
-  .token-volume {
-    justify-content: flex-end;
-  }
-}
-
-@media (max-width: 768px) {
-  .grid-header {
-    display: none;
-  }
-  .token-row {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 1rem;
-    background: var(--card-bg);
-    border-radius: 8px;
-    margin: 0.5rem 0;
-  }
-  .token-info {
-    padding: 0;
-  }
-  .token-price,
-  .token-change,
-  .token-volume,
-  .token-fdv,
-  .token-liq {
-    text-align: left;
-    padding: 0;
-  }
-  .token-number {
-    font-weight: 600;
-    color: var(--primary-color);
-  }
-  .social-icons,
-  .chart-button {
-    justify-content: flex-start;
-  }
-}
-
-@media (max-width: 480px) {
-  .token-row {
-    padding: 0.75rem;
-  }
-  .token-info img {
-    width: 24px;
-    height: 24px;
-  }
-  .token-symbol,
-  .token-price,
-  .token-change,
-  .token-volume,
-  .token-fdv,
-  .token-liq {
-    font-size: 0.8rem;
-  }
-  .social-icons i,
-  .chart-button i {
-    font-size: 0.9rem;
-  }
-}
-
-  /* Pagination */
-  .pagination {
-    display: flex;
-    justify-content: center;
-    gap: 0.75rem;
-    margin-top: 1.5rem;
-  }
-
-  .page-number {
-    padding: 0.5rem 1rem;
-    background: var(--glass-bg);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
-  }
-
-  .page-number:hover {
-    background: var(--primary-color);
-    color: var(--dark-bg);
-  }
-
-  /* Chart Modal */
-  .chart-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
-
-  .chart-modal-content {
-    background: var(--card-bg);
-    padding: 1.5rem;
-    border-radius: 10px;
-    width: 90%;
-    max-width: 800px;
-    position: relative;
-  }
-
-  .chart-close-btn {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    padding: 0.5rem;
-    cursor: pointer;
-    color: var(--text-primary);
-  }
-
-  .time-frame-button {
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    font-size: 0.9rem;
-    background: var(--glass-bg);
-    border-radius: 8px;
-    transition: all 0.3s ease;
-  }
-
-  .time-frame-button:hover {
-    background: var(--primary-color);
-    color: var(--dark-bg);
-  }
-
-  .time-frame-button.active {
-    background: var(--primary-color);
-    color: var(--dark-bg);
-  }
-
-  /* Footer */
-  .site-footer {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    background: var(--dark-bg);
-    border-top: 1px solid var(--border-color);
-  }
-
-  .footer-content {
-    max-width: 1600px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .footer-logo {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .footer-logo-img {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-  }
-
-  .footer-logo-text {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 600;
-    color: var(--primary-color);
-    font-size: 1.2rem;
-  }
-
-  .footer-links {
-    display: flex;
-    gap: 1.5rem;
-  }
-
-  .footer-link {
-    color: var(--text-secondary);
-    text-decoration: none;
-    transition: color 0.3s ease;
-    font-size: 0.9rem;
-  }
-
-  .footer-link:hover {
-    color: var(--primary-color);
-  }
-
-  .footer-copyright {
-    color: var(--text-secondary);
-    font-size: 0.8rem;
-  }
-
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    body {
-      font-size: 14px;
+    :root {
+      --primary-color: #00ddeb;
+      --secondary-color: #7c4dff;
+      --accent-color: #00ff9d;
+      --success-color: #00ff9d;
+      --danger-color: #ff4d4d;
+      --warning-color: #ffab00;
+      --dark-bg: rgba(6, 10, 14, 0.85);
+      --card-bg: rgba(18, 24, 30, 0.45);
+      --glass-bg: rgba(255, 255, 255, 0.03); /* lebih transparan */
+      --text-primary: #eaf6ff;
+      --text-secondary: #b0b8cc;
+      --border-color: rgba(255, 255, 255, 0.08);
     }
 
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(180deg, rgba(6,10,14,1) 0%, rgba(15,22,24,0.95) 100%);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-size: 16px;
+      overflow-x: hidden;
+    }
+
+    /* Background video (preferensi) + fallback image */
+    .bg-media {
+      position: fixed;
+      inset: 0;
+      z-index: -4;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    /* Uncomment and provide grass.mp4 in project for best effect:
+      <video> element will play the grass video.
+      If you prefer not to use video, the background-image fallback below will show.
+    */
+    .bg-media video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 120%;
+      height: 120%;
+      object-fit: cover;
+      transform: translate(-50%, -50%);
+      filter: saturate(1.05) contrast(1.02) brightness(0.95);
+      opacity: 0.95;
+    }
+
+    /* Fallback high-res grass image */
+    .bg-image {
+      position: absolute;
+      inset: 0;
+      background-image: url("https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=2400&q=80");
+      background-size: cover;
+      background-position: center;
+      filter: contrast(1.02) saturate(1.05) brightness(0.95);
+      transform-origin: center;
+      will-change: transform;
+      opacity: 0.95;
+      animation: slowPan 40s linear infinite;
+    }
+
+    /* Halus gerakan pan untuk memberi kesan hidup */
+    @keyframes slowPan {
+      0% { transform: scale(1.02) translateX(0); }
+      50% { transform: scale(1.02) translateX(-20px); }
+      100% { transform: scale(1.02) translateX(0); }
+    }
+
+    /* Overlay SVG kecil yang "mengibaskan" rumput (subtle) */
+    .grass-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      pointer-events: none;
+      opacity: 0.14;
+      mix-blend-mode: screen;
+    }
+    .grass-svg { width: 100%; height: 100%; }
+
+    /* Floating particles (tweak) */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -2;
+    }
+    .particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: rgba(0, 221, 235, 0.9);
+      border-radius: 50%;
+      animation: float 14s infinite linear;
+      opacity: 0.65;
+    }
+    @keyframes float {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.6; }
+      100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* Top Navigation */
     .top-bar {
-      padding: 0.75rem;
-      flex-direction: column;
-      gap: 0.75rem;
+      position: sticky;
+      top: 12px;
+      z-index: 100;
+      margin: 0 1rem;
+      padding: 0.75rem 1rem;
+      background: linear-gradient(180deg, rgba(8,12,16,0.35), rgba(8,12,16,0.18));
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(8px) saturate(1.2);
+      box-shadow: 0 6px 22px rgba(0,0,0,0.45);
     }
 
+    .logo-link { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
     .logo-img {
-      width: 32px;
-      height: 32px;
+      width: 40px; height: 40px; border-radius: 50%;
+      box-shadow: 0 0 18px rgba(0, 221, 235, 0.12);
+      object-fit: cover;
+      border: 1px solid rgba(255,255,255,0.04);
     }
-
     .logo-title {
-      font-size: 1.2rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      letter-spacing: 0.6px;
     }
+    .nav-links { display:flex; gap:0.75rem; align-items:center; }
 
+    .social-badge {
+      padding: 0.45rem 0.9rem;
+      background: rgba(255,255,255,0.03);
+      border-radius: 18px;
+      color: var(--text-primary);
+      text-decoration: none;
+      transition: all 0.22s ease;
+      font-size: 0.9rem;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .social-badge:hover { background: var(--primary-color); color: #041016; transform: translateY(-3px); }
+
+    /* Trending Ribbon */
     .data-ribbon {
-      padding: 0.75rem;
-      flex-direction: column;
-      align-items: flex-start;
+      margin: 1rem;
+      background: transparent;
+      padding: 0.45rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      position: relative;
     }
-
     .ribbon-tag {
-      font-size: 0.85rem;
+      background: linear-gradient(90deg, rgba(0,221,235,0.95), rgba(124,77,255,0.9));
+      padding: 0.4rem 0.85rem;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #041016;
+      box-shadow: 0 6px 20px rgba(0, 221, 235, 0.08);
     }
-
+    .ribbon-container {
+      flex: 1;
+      overflow-x: auto;
+      white-space: nowrap;
+      scroll-behavior: smooth;
+      padding: 0.35rem 0;
+    }
     .trending-token {
-      font-size: 0.85rem;
-      padding: 0.5rem 0.75rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.9rem;
+      background: rgba(255,255,255,0.02);
+      border-radius: 10px;
+      margin-right: 0.6rem;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      border: 1px solid rgba(255,255,255,0.03);
     }
+    .trending-token:hover { background: var(--primary-color); color: #041016; transform: translateY(-3px); }
 
-    .trending-logo {
-      width: 20px;
-      height: 20px;
+    .slider-controls { display:flex; gap:0.5rem; }
+    .slider-btn {
+      background: rgba(255,255,255,0.03);
+      border: none;
+      color: var(--text-primary);
+      padding: 0.45rem;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      min-width: 40px; min-height: 40px;
     }
+    .slider-btn:hover { background: var(--primary-color); color: #041016; }
 
+    /* Main Layout */
     .main-layout {
-      flex-direction: column;
-      padding: 1rem;
+      display: flex;
+      gap: 1.2rem;
+      max-width: 1400px;
+      margin: 1rem auto;
+      padding: 0 1rem 2rem;
     }
+
+    .container { flex: 2; }
 
     .live-chart-panel {
-      position: static;
+      flex: 1;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius: 12px;
       padding: 1rem;
+      position: sticky;
+      top: 100px;
+      height: fit-content;
+      border: 1px solid var(--border-color);
+      backdrop-filter: blur(8px);
     }
 
-    .live-chart-container {
-      height: 250px;
+    .live-chart-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.9rem;
+      text-align: center;
+      color: var(--primary-color);
+    }
+
+    /* Data Grid */
+    .data-grid {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+      margin-bottom: 1.6rem;
+      border: 1px solid rgba(255,255,255,0.04);
     }
 
     .grid-header {
-      display: none;
-    }
-
-    .token-row {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      padding: 0.75rem;
-    }
-
-    .token-info img {
-      width: 28px;
-      height: 28px;
-    }
-
-    .token-symbol {
+      display: grid;
+      grid-template-columns: 60px 2.5fr 1.2fr 1.2fr 1.5fr 1.5fr 1.2fr 1fr 80px;
+      gap: 0.75rem;
+      padding: 1rem 1.25rem;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-bottom: 1px solid var(--border-color);
+      font-weight: 600;
       font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      align-items: center;
+    }
+    .token-row {
+      display: grid;
+      grid-template-columns: 60px 2.5fr 1.2fr 1.2fr 1.5fr 1.5fr 1.2fr 1fr 80px;
+      gap: 0.75rem;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border-color);
+      align-items: center;
+      transition: background 0.22s ease, transform 0.14s ease;
+    }
+    .token-row:hover {
+      background: rgba(0, 221, 235, 0.12);
+      transform: translateX(6px);
     }
 
-    .social-icons i {
-      font-size: 1rem;
-    }
-  }
+    .token-info { display:flex; align-items:center; gap:0.75rem; padding:0.25rem; overflow:hidden; }
+    .token-info img { width:28px; height:28px; border-radius:50%; cursor:pointer; transition:transform 0.22s ease; }
+    .token-info img:hover { transform: scale(1.08); }
+    .token-symbol { color: var(--text-secondary); font-size:0.85rem; font-weight:500; }
 
-  @media (max-width: 480px) {
-    body {
-      font-size: 12px;
-    }
+    .token-price, .token-change, .token-volume, .token-fdv, .token-liq { text-align:right; padding:0.5rem; white-space:nowrap; }
+    .positive-change { color: var(--success-color); }
+    .negative-change { color: var(--danger-color); }
 
-    .top-bar {
-      padding: 0.5rem;
-    }
+    .social-icons { display:flex; justify-content:center; gap:0.5rem; padding:0.5rem; }
+    .social-icons i { cursor:pointer; transition: color 0.22s ease, transform 0.22s ease; font-size:1rem; }
+    .social-icons i:hover { color: var(--primary-color); transform: scale(1.15); }
 
-    .logo-img {
-      width: 28px;
-      height: 28px;
+    /* Pagination: hanya Prev / Next (tidak menampilkan nomor halaman) */
+    .pagination {
+      display:flex;
+      justify-content:center;
+      gap:0.75rem;
+      margin-top: 1rem;
     }
+    .page-ctrl {
+      padding: 0.6rem 1rem;
+      background: rgba(255,255,255,0.03);
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.04);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.18s ease;
+      display:inline-flex;
+      gap:0.5rem;
+      align-items:center;
+    }
+    .page-ctrl:hover { background: var(--primary-color); color: #041016; transform: translateY(-3px); }
 
-    .logo-title {
-      font-size: 1rem;
+    /* Footer */
+    .site-footer {
+      margin-top: 2rem;
+      padding: 1.25rem;
+      background: transparent;
+      border-top: 1px solid rgba(255,255,255,0.04);
     }
+    .footer-content { max-width:1400px; margin:0 auto; display:flex; flex-direction:column; align-items:center; gap:0.6rem; }
+    .footer-logo { display:flex; align-items:center; gap:0.5rem; }
+    .footer-logo-img { width:32px; height:32px; border-radius:50%; }
+    .footer-logo-text { font-family: 'Space Grotesk', sans-serif; font-weight:600; color: var(--primary-color); font-size:1.05rem; }
+    .footer-copyright { color: var(--text-secondary); font-size:0.85rem; }
 
-    .social-badge {
-      font-size: 0.8rem;
-      padding: 0.4rem 0.8rem;
+    /* Responsive tweaks */
+    @media (max-width: 992px) {
+      .grid-header, .token-row { grid-template-columns: 60px 2.5fr 1.2fr 1.2fr 1.5fr 80px; }
+      .grid-header > div:nth-child(6), .grid-header > div:nth-child(7),
+      .token-row > div:nth-child(6), .token-row > div:nth-child(7) { display:none; }
     }
-
-    .data-ribbon {
-      padding: 0.5rem;
+    @media (max-width: 768px) {
+      .grid-header { display:none; }
+      .token-row { display:flex; flex-direction:column; gap:0.5rem; padding:1rem; background: var(--card-bg); border-radius:8px; margin:0.5rem 0; }
+      .main-layout { flex-direction:column; padding:0 0.75rem; }
+      .live-chart-panel { position:static; }
     }
-
-    .ribbon-tag {
-      font-size: 0.8rem;
+    @media (max-width: 480px) {
+      body { font-size:14px; }
+      .logo-img { width:34px; height:34px; }
+      .logo-title { font-size:1rem; }
     }
-
-    .trending-token {
-      font-size: 0.8rem;
-      padding: 0.4rem 0.6rem;
-    }
-
-    .trending-logo {
-      width: 18px;
-      height: 18px;
-    }
-
-    .live-chart-container {
-      height: 200px;
-    }
-  }
   </style>
 </head>
 <body>
+  <!-- Background media container:
+       - Optional: uncomment the <video> tag and provide "grass.mp4" for most realistic effect.
+       - Fallback: high-res image from Unsplash with subtle pan animation.
+  -->
+  <div class="bg-media" aria-hidden="true">
+    <!-- Best: local video file for real swaying grass (muted, loop) -->
+    <!--
+    <video autoplay muted loop playsinline>
+      <source src="grass.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+    -->
+    <div class="bg-image"></div>
+
+    <!-- Subtle SVG overlay to simulate blades swaying (very transparent) -->
+    <div class="grass-overlay" aria-hidden="true">
+      <svg class="grass-svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <linearGradient id="g1" x1="0" x2="1">
+            <stop offset="0" stop-color="#98f6c9" stop-opacity="0.18" />
+            <stop offset="1" stop-color="#00ddeb" stop-opacity="0.06" />
+          </linearGradient>
+          <path id="blade" d="M0,80 C10,60 20,40 30,20 C40,0 50,10 60,30 C70,50 80,75 90,90 L90,140 L0,140 Z" />
+        </defs>
+
+        <!-- Multiple blades with subtle animation -->
+        <g transform="translate(0,520) scale(8)">
+          <use href="#blade" x="10" style="fill:url(#g1); transform-origin:45px 90px; animation: sway1 6s ease-in-out infinite;" />
+          <use href="#blade" x="35" style="fill:url(#g1); opacity:0.9; transform-origin:45px 90px; animation: sway2 7s ease-in-out -1s infinite;" />
+          <use href="#blade" x="60" style="fill:url(#g1); opacity:0.8; transform-origin:45px 90px; animation: sway1 5.5s ease-in-out -0.6s infinite;" />
+          <use href="#blade" x="90" style="fill:url(#g1); opacity:0.7; transform-origin:45px 90px; animation: sway2 6.8s ease-in-out -2s infinite;" />
+          <use href="#blade" x="120" style="fill:url(#g1); opacity:0.75; transform-origin:45px 90px; animation: sway1 6.2s ease-in-out -0.4s infinite;" />
+        </g>
+
+        <style>
+          @keyframes sway1 {
+            0% { transform: rotate(-3deg); }
+            50% { transform: rotate(4deg); }
+            100% { transform: rotate(-3deg); }
+          }
+          @keyframes sway2 {
+            0% { transform: rotate(4deg); }
+            50% { transform: rotate(-5deg); }
+            100% { transform: rotate(4deg); }
+          }
+        </style>
+      </svg>
+    </div>
+  </div>
+
   <!-- Floating Particles -->
   <div class="particles" id="particles"></div>
 
-  <!-- Top Navigation Bar -->
+  <!-- Top Navigation Bar (language switcher removed) -->
   <div class="top-bar">
     <a href="index.html" class="logo-link">
-      <img src="genz.webp" class="logo-img" alt="Genz.xyz Logo">
+      <img src="genz.webp" class="logo-img" alt="Genz.xyz Logo" />
       <div class="logo-title">Genz.xyz</div>
     </a>
+
     <div class="nav-links">
-      
       <a href="https://x.com/DumbledoreZx" target="_blank" class="social-badge">
-        
         <span>Ahrizky</span>
       </a>
       <a href="https://t.me/YourTelegramChannel" target="_blank" class="social-badge">
         <i class="fa-brands fa-telegram"></i>
         <span>Telegram</span>
       </a>
-      <div class="language-selector">
-        <div class="language-toggle" id="languageToggle">
-          <i class="fa-solid fa-globe"></i>
-          <span id="currentLanguage">English</span>
-        </div>
-        <div class="language-dropdown" id="languageDropdown">
-          <div class="language-option" data-lang="en">English</div>
-          <div class="language-option" data-lang="id">Bahasa Indonesia</div>
-        </div>
-      </div>
     </div>
   </div>
 
   <!-- Trending Tokens Ribbon -->
   <div class="data-ribbon">
-    <div class="ribbon-tag">
-      <i class="fa-solid fa-fire"></i>
-      Trending
-    </div>
+    <div class="ribbon-tag"><i class="fa-solid fa-fire"></i> Trending</div>
     <div class="ribbon-container" id="trendingContainer"></div>
     <div class="slider-controls">
       <button class="slider-btn" id="slideLeft"><i class="fa-solid fa-chevron-left"></i></button>
@@ -985,7 +448,7 @@
   <div class="main-layout">
     <!-- Token Data Container -->
     <div class="container" id="tokenContainer">
-      <div class="toolbar">
+      <div class="toolbar" style="margin-bottom:0.7rem;">
         <div class="filter-group">
           <button class="filter-btn active" data-filter="all">
             <i class="fa-solid fa-fire"></i>
@@ -1008,52 +471,55 @@
         </div>
       </div>
 
-      <!-- Token Data Grid -->
+      <!-- Data Grid -->
       <div class="data-grid glass">
         <div class="grid-header">
           <div class="header-rank">#</div>
           <div class="header-token">Token</div>
           <div class="header-price sortable" data-sort="price">
-            Price
-            <i class="fa-solid fa-sort"></i>
+            Price <i class="fa-solid fa-sort"></i>
           </div>
           <div class="header-change sortable" data-sort="change24h">
-            24h %
-            <i class="fa-solid fa-sort"></i>
+            24h % <i class="fa-solid fa-sort"></i>
           </div>
           <div class="header-volume sortable" data-sort="volume">
-            24h Volume
-            <i class="fa-solid fa-sort"></i>
+            24h Volume <i class="fa-solid fa-sort"></i>
           </div>
           <div class="header-mcap sortable" data-sort="fdv">
-            Market Cap
-            <i class="fa-solid fa-sort"></i>
+            Market Cap <i class="fa-solid fa-sort"></i>
           </div>
           <div class="header-liq sortable" data-sort="liquidity">
-            Liquidity
-            <i class="fa-solid fa-sort"></i>
+            Liquidity <i class="fa-solid fa-sort"></i>
           </div>
           <div class="header-social">Social</div>
           <div class="header-chart">Chart</div>
         </div>
-        <div class="grid-body" id="tierBody"></div>
+
+        <div class="grid-body" id="tierBody">
+          <!-- token rows injected by script.js -->
+        </div>
       </div>
 
-      <!-- Pagination Controls -->
-      <div class="pagination" id="pagination"></div>
+      <!-- Pagination Controls: hanya Prev / Next, tanpa nomor halaman -->
+      <div class="pagination" id="pagination">
+        <button class="page-ctrl" id="prevPage"><i class="fa-solid fa-chevron-left"></i> Prev</button>
+        <button class="page-ctrl" id="nextPage">Next <i class="fa-solid fa-chevron-right"></i></button>
+      </div>
     </div>
 
-   
+    <!-- Live Chart Panel (placeholder) -->
+    <aside class="live-chart-panel">
+      <div class="live-chart-title" id="liveChartTitle">Select a Token to View Live Chart</div>
+      <div class="live-chart-container" id="liveChart" style="height:300px"></div>
+    </aside>
+  </div>
 
   <!-- Footer -->
   <footer class="site-footer">
     <div class="footer-content">
       <div class="footer-logo">
-        <img src="genz.webp" class="footer-logo-img" alt="Genz.xyz Logo">
+        <img src="genz.webp" class="footer-logo-img" alt="Genz.xyz Logo" />
         <span class="footer-logo-text">Genz.xyz</span>
-      </div>
-      <div class="footer-links">
-        
       </div>
       <div class="footer-copyright">
         Genz.xyz screener by Ahrizky.xyz.
@@ -1062,143 +528,44 @@
   </footer>
 
   <script>
-    // Create floating particles
+    // Create floating particles (subtle)
     function createParticles() {
       const particlesContainer = document.getElementById('particles');
-      const particleCount = 30;
-
+      const particleCount = 26;
       for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.animationDelay = Math.random() * 15 + 's';
-        particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
-        particlesContainer.appendChild(particle);
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.top = Math.random() * 100 + '%';
+        p.style.animationDelay = Math.random() * 14 + 's';
+        p.style.animationDuration = (Math.random() * 10 + 10) + 's';
+        p.style.opacity = (Math.random() * 0.6 + 0.2).toString();
+        particlesContainer.appendChild(p);
       }
     }
 
-    // Language switcher functionality
-    function setupLanguageSwitcher() {
-      const languageToggle = document.getElementById('languageToggle');
-      const languageDropdown = document.getElementById('languageDropdown');
-      const currentLanguage = document.getElementById('currentLanguage');
-      const languageOptions = document.querySelectorAll('.language-option');
-
-      // Load saved language preference
-      const savedLang = localStorage.getItem('language') || 'en';
-      document.documentElement.lang = savedLang;
-      currentLanguage.textContent = savedLang === 'en' ? 'English' : 'Bahasa Indonesia';
-
-      languageToggle.addEventListener('click', () => {
-        languageDropdown.classList.toggle('show');
-      });
-
-      languageOptions.forEach(option => {
-        option.addEventListener('click', () => {
-          const lang = option.getAttribute('data-lang');
-          localStorage.setItem('language', lang);
-          document.documentElement.lang = lang;
-          currentLanguage.textContent = lang === 'en' ? 'English' : 'Bahasa Indonesia';
-          languageDropdown.classList.remove('show');
-          updateUIText(lang);
-        });
-      });
-
-      // Close dropdown when clicking outside
-      document.addEventListener('click', (e) => {
-        if (!languageToggle.contains(e.target) && !languageDropdown.contains(e.target)) {
-          languageDropdown.classList.remove('show');
-        }
-      });
-
-      // Update UI text based on language
-      function updateUIText(lang) {
-        const texts = {
-          en: {
-            title: 'Genz.xyz | Meme Analytics Platform',
-            trending: 'Trending',
-            liveChartTitle: 'Select a Token to View Live Chart',
-            filterAll: 'Potential Memes',
-            filterWhale: 'Whale Watch',
-            filterMeme: 'Meme Domination',
-            filterPump: 'New Launches on Pump.fun',
-            badge1M: '1M Genz Required',
-            badge2M: '2M Genz Required',
-            headerRank: '#',
-            headerToken: 'Token',
-            headerPrice: 'Price',
-            headerChange: '24h %',
-            headerVolume: '24h Volume',
-            headerMcap: 'Market Cap',
-            headerLiq: 'Liquidity',
-            headerSocial: 'Social',
-            headerChart: 'Chart',
-            footerTerms: 'Terms',
-            footerPrivacy: 'Privacy',
-            footerDisclaimer: 'Disclaimer',
-            footerCopyright: '© 2025 Genz.xyz by Ahrizky.xyz. All rights reserved.'
-          },
-          id: {
-            title: 'Genz.xyz | Platform Analitik Meme',
-            trending: 'Sedang Tren',
-            liveChartTitle: 'Pilih Token untuk Melihat Grafik Langsung',
-            filterAll: 'Meme Berpotensi',
-            filterWhale: 'Pantau Whale',
-            filterMeme: 'Dominasi Meme',
-            filterPump: 'Peluncuran Baru di Pump.fun',
-            badge1M: '1M Genz Dibutuhkan',
-            badge2M: '2M Genz Dibutuhkan',
-            headerRank: '#',
-            headerToken: 'Token',
-            headerPrice: 'Harga',
-            headerChange: '24j %',
-            headerVolume: 'Volume 24j',
-            headerMcap: 'Kapitalisasi Pasar',
-            headerLiq: 'Likuiditas',
-            headerSocial: 'Sosial',
-            headerChart: 'Grafik',
-            footerTerms: 'Syarat',
-            footerPrivacy: 'Privasi',
-            footerDisclaimer: 'Penafian',
-            footerCopyright: '© 2025 Genz.xyz oleh Ahrizky.xyz. Semua hak dilindungi.'
-          }
-        };
-
-        document.title = texts[lang].title;
-        document.querySelector('.ribbon-tag').innerHTML = `<i class="fa-solid fa-fire"></i> ${texts[lang].trending}`;
-        document.getElementById('liveChartTitle').textContent = texts[lang].liveChartTitle;
-        document.querySelector('.filter-btn[data-filter="all"]').innerHTML = `<i class="fa-solid fa-fire"></i> ${texts[lang].filterAll}`;
-        document.querySelector('.filter-btn[data-filter="Whale"]').innerHTML = `<i class="fa-solid fa-whale"></i> ${texts[lang].filterWhale} <span class="badge">${texts[lang].badge1M}</span>`;
-        document.querySelector('.filter-btn[data-filter="Meme"]').innerHTML = `<i class="fa-solid fa-brain"></i> ${texts[lang].filterMeme} <span class="badge">${texts[lang].badge2M}</span>`;
-        document.querySelector('.filter-btn[data-filter="pump"]').innerHTML = `<i class="fa-solid fa-rocket"></i> ${texts[lang].filterPump}`;
-        document.querySelector('.header-rank').textContent = texts[lang].headerRank;
-        document.querySelector('.header-token').textContent = texts[lang].headerToken;
-        document.querySelector('.header-price').innerHTML = `${texts[lang].headerPrice} <i class="fa-solid fa-sort"></i>`;
-        document.querySelector('.header-change').innerHTML = `${texts[lang].headerChange} <i class="fa-solid fa-sort"></i>`;
-        document.querySelector('.header-volume').innerHTML = `${texts[lang].headerVolume} <i class="fa-solid fa-sort"></i>`;
-        document.querySelector('.header-mcap').innerHTML = `${texts[lang].headerMcap} <i class="fa-solid fa-sort"></i>`;
-        document.querySelector('.header-liq').innerHTML = `${texts[lang].headerLiq} <i class="fa-solid fa-sort"></i>`;
-        document.querySelector('.header-social').textContent = texts[lang].headerSocial;
-        document.querySelector('.header-chart').textContent = texts[lang].headerChart;
-        document.querySelector('.footer-link:nth-child(1)').textContent = texts[lang].footerTerms;
-        document.querySelector('.footer-link:nth-child(2)').textContent = texts[lang].footerPrivacy;
-        document.querySelector('.footer-link:nth-child(3)').textContent = texts[lang].footerDisclaimer;
-        document.querySelector('.footer-copyright').textContent = texts[lang].footerCopyright;
-
-        // Trigger event to update dynamic content in JavaScript
-        window.dispatchEvent(new CustomEvent('languageChange', { detail: { lang } }));
-      }
-
-      // Initialize UI with saved language
-      updateUIText(savedLang);
-    }
-
-    // Initialize particles and language switcher on page load
+    // Slider buttons behaviour (scroll trending ribbon)
     document.addEventListener('DOMContentLoaded', () => {
       createParticles();
-      setupLanguageSwitcher();
+
+      const ribbon = document.getElementById('trendingContainer');
+      const left = document.getElementById('slideLeft');
+      const right = document.getElementById('slideRight');
+      left.addEventListener('click', () => { ribbon.scrollBy({ left: -260, behavior: 'smooth' }); });
+      right.addEventListener('click', () => { ribbon.scrollBy({ left: 260, behavior: 'smooth' }); });
+
+      // Pagination: dispatch simple events so external script can listen
+      const prev = document.getElementById('prevPage');
+      const next = document.getElementById('nextPage');
+      prev.addEventListener('click', () => window.dispatchEvent(new CustomEvent('pagination', { detail: { dir: 'prev' } })));
+      next.addEventListener('click', () => window.dispatchEvent(new CustomEvent('pagination', { detail: { dir: 'next' } })));
     });
   </script>
+
+  <!-- Your external script (script.js) can still populate ribbon, token table, etc.
+       It should listen to 'pagination' event to handle prev/next if needed:
+       window.addEventListener('pagination', e => { if (e.detail.dir === 'prev') {...} });
+  -->
   <script src="script.js"></script>
 </body>
 </html>
