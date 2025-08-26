@@ -1,947 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Genz.xyz | Meme Analytics Platform</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="icon" href="genz.webp" type="image/webp">
-  
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
-  
-  <!-- TradingView Lightweight Charts -->
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="genz.webp" type="image/webp" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
-  
+
   <style>
-  :root {
-    --primary-color: #00ddeb; /* Neon blue like Mobyscreener */
-    --secondary-color: #7c4dff; /* Neon purple */
-    --accent-color: #00ff9d; /* Neon green */
-    --success-color: #00ff9d;
-    --danger-color: #ff4d4d;
-    --warning-color: #ffab00;
-    --dark-bg: #0a0e1a; /* Darker background */
-    --card-bg: rgba(20, 25, 40, 0.9);
-    --glass-bg: rgba(255, 255, 255, 0.05);
-    --text-primary: #ffffff;
-    --text-secondary: #b0b8cc;
-    --border-color: rgba(255, 255, 255, 0.1);
-  }
-
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  body {
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, #0a0e1a 0%, #1c2526 100%);
-    color: var(--text-primary);
-    min-height: 100vh;
-    position: relative;
-    overflow-x: hidden;
-    font-size: 16px;
-  }
-
-  /* Animated Background */
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at 30% 70%, rgba(0, 221, 235, 0.2) 0%, transparent 50%);
-    z-index: -2;
-  }
-
-  /* Floating Particles */
-  .particles {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: -1;
-  }
-
-  .particle {
-    position: absolute;
-    width: 2px;
-    height: 2px;
-    background: var(--primary-color);
-    border-radius: 50%;
-    animation: float 15s infinite linear;
-  }
-
-  @keyframes float {
-    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-    10% { opacity: 0.8; }
-    90% { opacity: 0.8; }
-    100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
-  }
-
-  /* Glassmorphism */
-  .glass {
-    background: var(--glass-bg);
-    backdrop-filter: blur(15px);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-  }
-
-  /* Top Navigation */
-  .top-bar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    padding: 1rem 2rem;
-    background: var(--dark-bg);
-    backdrop-filter: blur(15px);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .logo-link {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-decoration: none;
-  }
-
-  .logo-img {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    box-shadow: 0 0 12px var(--primary-color);
-  }
-
-  .logo-title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary-color);
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-  }
-
-  .social-badge {
-    padding: 0.5rem 1rem;
-    background: var(--glass-bg);
-    border-radius: 20px;
-    color: var(--text-primary);
-    text-decoration: none;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
-  }
-
-  .social-badge:hover {
-    background: var(--primary-color);
-    color: var(--dark-bg);
-    transform: translateY(-2px);
-  }
-
-  /* Language Switcher */
-  .language-selector {
-    position: relative;
-    display: inline-block;
-  }
-
-  .language-toggle {
-    padding: 0.5rem 1rem;
-    background: var(--glass-bg);
-    border-radius: 20px;
-    color: var(--text-primary);
-    cursor: pointer;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s ease;
-  }
-
-  .language-toggle:hover {
-    background: var(--primary-color);
-    color: var(--dark-bg);
-  }
-
-  .language-dropdown {
-    display: none;
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    min-width: 100px;
-    z-index: 101;
-  }
-
-  .language-dropdown.show {
-    display: block;
-  }
-
-  .language-option {
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    color: var(--text-primary);
-    font-size: 0.9rem;
-    transition: background 0.3s ease;
-  }
-
-  .language-option:hover {
-    background: var(--primary-color);
-    color: var(--dark-bg);
-  }
-
-  /* Trending Ribbon */
-  .data-ribbon {
-    background: var(--dark-bg);
-    padding: 0.75rem 2rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    position: relative;
-  }
-
-  .ribbon-tag {
-    background: var(--primary-color);
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--dark-bg);
-  }
-
-  .ribbon-container {
-    flex: 1;
-    overflow-x: auto;
-    white-space: nowrap;
-    scroll-behavior: smooth;
-    padding: 0.5rem 0;
-  }
-
-  .ribbon-container::-webkit-scrollbar {
-    height: 6px;
-  }
-
-  .ribbon-container::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
-    border-radius: 10px;
-  }
-
-  .trending-token {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background: var(--glass-bg);
-    border-radius: 10px;
-    margin-right: 0.75rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-
-  .trending-token:hover {
-    background: var(--primary-color);
-    color: var(--dark-bg);
-    transform: translateY(-2px);
-  }
-
-  .trending-logo {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-  }
-
-  .trending-symbol {
-    font-weight: 600;
-    font-size: 0.9rem;
-  }
-
-  .trending-change {
-    font-size: 0.8rem;
-  }
-
-  .slider-controls {
-    display: flex;
-    gap: 0.5rem;
-  }
-
-  .slider-btn {
-    background: var(--glass-bg);
-    border: none;
-    color: var(--text-primary);
-    padding: 0.5rem;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    min-width: 40px;
-    min-height: 40px;
-  }
-
-  .slider-btn:hover {
-    background: var(--primary-color);
-    color: var(--dark-bg);
-  }
-
-  /* Main Layout */
-  .main-layout {
-    display: flex;
-    gap: 1.5rem;
-    max-width: 1600px;
-    margin: 0 auto;
-    padding: 1.5rem;
-  }
-
-  .container {
-    flex: 2;
-  }
-
-  /* Live Chart Panel */
-  .live-chart-panel {
-    flex: 1;
-    background: var(--glass-bg);
-    backdrop-filter: blur(15px);
-    border-radius: 10px;
-    padding: 1.5rem;
-    position: sticky;
-    top: 100px;
-    height: fit-content;
-  }
-
-  .live-chart-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    text-align: center;
-    cursor: pointer;
-    color: var(--primary-color);
-  }
-
-  .live-chart-container {
-    width: 100%;
-    height: 300px;
-  }
-
-  .token-selector {
-    margin-bottom: 1rem;
-    position: relative;
-  }
-
-  .token-dropdown {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    max-height: 200px;
-    overflow-y: auto;
-    z-index: 100;
-  }
-
-  .token-dropdown.show {
-    display: block;
-  }
-
-  .token-dropdown-item {
-    padding: 0.75rem;
-    cursor: pointer;
-    color: var(--text-primary);
-    transition: background 0.3s ease;
-    font-size: 0.9rem;
-  }
-
-  .token-dropdown-item:hover {
-    background: var(--primary-color);
-    color: var(--dark-bg);
-  }
-
-  /* Toolbar */
-  .toolbar {
-    margin-bottom: 1.5rem;
-  }
-
-  .filter-group {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-  }
-
-  .filter-btn {
-    padding: 0.75rem 1.5rem;
-    background: var(--glass-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    color: var(--text-primary);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
-
-  .filter-btn:hover {
-    background: var(--primary-color);
-    color: var(--dark-bg);
-    transform: translateY(-2px);
-  }
-
-  .filter-btn.active {
-    background: var(--primary-color);
-    color: var(--dark-bg);
-    box-shadow: 0 0 10px var(--primary-color);
-  }
-
-  .filter-btn.premium {
-    background: linear-gradient(135deg, var(--warning-color), #ff6b6b);
-  }
-
-  .badge {
-    background: var(--primary-color);
-    padding: 0.3rem 0.6rem;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    color: var(--dark-bg);
-  }
-
-  /* Data Grid */
-.data-grid {
-  background: var(--glass-bg);
-  backdrop-filter: blur(15px);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  margin-bottom: 2rem;
-}
-
-.grid-header {
-  display: grid;
-  grid-template-columns: 60px 2.5fr 1.2fr 1.2fr 1.5fr 1.5fr 1.2fr 1fr 80px;
-  gap: 0.75rem;
-  padding: 1.2rem 1.5rem;
-  background: var(--card-bg);
-  border-bottom: 1px solid var(--border-color);
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  align-items: center;
-}
-
-.grid-header > div {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 0.5rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.header-rank,
-.token-number {
-  justify-content: center;
-}
-
-.header-price,
-.header-change,
-.header-volume,
-.header-mcap,
-.header-liq {
-  justify-content: flex-end;
-}
-
-.header-social,
-.header-chart {
-  justify-content: center;
-}
-
-.sortable {
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.sortable:hover {
-  color: var(--primary-color);
-}
-
-.sortable i {
-  margin-left: 0.3rem;
-  font-size: 0.8rem;
-}
-
-.token-row {
-  display: grid;
-  grid-template-columns: 60px 2.5fr 1.2fr 1.2fr 1.5fr 1.5fr 1.2fr 1fr 80px;
-  gap: 0.75rem;
-  padding: 1.2rem 1.5rem;
-  border-bottom: 1px solid var(--border-color);
-  align-items: center;
-  transition: background 0.3s ease, transform 0.2s ease;
-}
-
-.token-row:hover {
-  background: rgba(0, 221, 235, 0.15);
-  transform: translateX(4px);
-}
-
-.token-info {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem;
-  overflow: hidden;
-}
-
-.token-info img {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-.token-info img:hover {
-  transform: scale(1.1);
-}
-
-.token-info > div {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.token-symbol {
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.token-price,
-.token-change,
-.token-volume,
-.token-fdv,
-.token-liq {
-  text-align: right;
-  padding: 0.5rem;
-  white-space: nowrap;
-}
-
-.positive-change {
-  color: var(--success-color);
-}
-
-.negative-change {
-  color: var(--danger-color);
-}
-
-.social-icons {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
-}
-
-.social-icons i {
-  cursor: pointer;
-  transition: color 0.3s ease, transform 0.3s ease;
-  font-size: 1rem;
-}
-
-.social-icons i:hover {
-  color: var(--primary-color);
-  transform: scale(1.2);
-}
-
-.chart-button {
-  text-align: center;
-  padding: 0.5rem;
-}
-
-.chart-button i {
-  cursor: pointer;
-  transition: color 0.3s ease, transform 0.3s ease;
-  font-size: 1rem;
-}
-
-.chart-button i:hover {
-  color: var(--primary-color);
-  transform: scale(1.2);
-}
-
-.grid-body {
-  max-height: 70vh;
-  overflow-y: auto;
-}
-
-.grid-body::-webkit-scrollbar {
-  width: 6px;
-}
-
-.grid-body::-webkit-scrollbar-thumb {
-  background: var(--primary-color);
-  border-radius: 10px;
-}
-
-/* Responsive Design */
-@media (max-width: 992px) {
-  .grid-header,
-  .token-row {
-    grid-template-columns: 60px 2.5fr 1.2fr 1.2fr 1.5fr 80px;
-  }
-  .grid-header > div:nth-child(6),
-  .grid-header > div:nth-child(7),
-  .token-row > div:nth-child(6),
-  .token-row > div:nth-child(7) {
-    display: none;
-  }
-  .header-price,
-  .header-change,
-  .header-volume,
-  .token-price,
-  .token-change,
-  .token-volume {
-    justify-content: flex-end;
-  }
-}
-
-@media (max-width: 768px) {
-  .grid-header {
-    display: none;
-  }
-  .token-row {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 1rem;
-    background: var(--card-bg);
-    border-radius: 8px;
-    margin: 0.5rem 0;
-  }
-  .token-info {
-    padding: 0;
-  }
-  .token-price,
-  .token-change,
-  .token-volume,
-  .token-fdv,
-  .token-liq {
-    text-align: left;
-    padding: 0;
-  }
-  .token-number {
-    font-weight: 600;
-    color: var(--primary-color);
-  }
-  .social-icons,
-  .chart-button {
-    justify-content: flex-start;
-  }
-}
-
-@media (max-width: 480px) {
-  .token-row {
-    padding: 0.75rem;
-  }
-  .token-info img {
-    width: 24px;
-    height: 24px;
-  }
-  .token-symbol,
-  .token-price,
-  .token-change,
-  .token-volume,
-  .token-fdv,
-  .token-liq {
-    font-size: 0.8rem;
-  }
-  .social-icons i,
-  .chart-button i {
-    font-size: 0.9rem;
-  }
-}
-
-  /* Pagination */
-  .pagination {
-    display: flex;
-    justify-content: center;
-    gap: 0.75rem;
-    margin-top: 1.5rem;
-  }
-
- 
-
-  
-
-  /* Chart Modal */
-  .chart-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
-
-  .chart-modal-content {
-    background: var(--card-bg);
-    padding: 1.5rem;
-    border-radius: 10px;
-    width: 90%;
-    max-width: 800px;
-    position: relative;
-  }
-
-  .chart-close-btn {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    padding: 0.5rem;
-    cursor: pointer;
-    color: var(--text-primary);
-  }
-
-  .time-frame-button {
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    font-size: 0.9rem;
-    background: var(--glass-bg);
-    border-radius: 8px;
-    transition: all 0.3s ease;
-  }
-
-  .time-frame-button:hover {
-    background: var(--primary-color);
-    color: var(--dark-bg);
-  }
-
-  .time-frame-button.active {
-    background: var(--primary-color);
-    color: var(--dark-bg);
-  }
-
-  /* Footer */
-  .site-footer {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    background: var(--dark-bg);
-    border-top: 1px solid var(--border-color);
-  }
-
-  .footer-content {
-    max-width: 1600px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .footer-logo {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .footer-logo-img {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-  }
-
-  .footer-logo-text {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 600;
-    color: var(--primary-color);
-    font-size: 1.2rem;
-  }
-
-  .footer-links {
-    display: flex;
-    gap: 1.5rem;
-  }
-
-  .footer-link {
-    color: var(--text-secondary);
-    text-decoration: none;
-    transition: color 0.3s ease;
-    font-size: 0.9rem;
-  }
-
-  .footer-link:hover {
-    color: var(--primary-color);
-  }
-
-  .footer-copyright {
-    color: var(--text-secondary);
-    font-size: 0.8rem;
-  }
-
-  /* Responsive Design */
-  @media (max-width: 768px) {
+    /* Background Video */
+    #bgVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -3;
+    }
+
+    /* Overlay agar konten tetap terbaca */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(2px);
+      z-index: -2;
+    }
+
+    /* Sembunyikan pagination */
+    .pagination {
+      display: none !important;
+    }
+
+    /* Tambahan styling modern */
     body {
-      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      color: #ffffff;
+      margin: 0;
+      overflow-x: hidden;
     }
 
-    .top-bar {
-      padding: 0.75rem;
-      flex-direction: column;
-      gap: 0.75rem;
+    .top-bar, .data-ribbon, .main-layout {
+      position: relative;
+      z-index: 1;
     }
 
-    .logo-img {
-      width: 32px;
-      height: 32px;
+    .glass {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
     }
-
-    .logo-title {
-      font-size: 1.2rem;
-    }
-
-    .data-ribbon {
-      padding: 0.75rem;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .ribbon-tag {
-      font-size: 0.85rem;
-    }
-
-    .trending-token {
-      font-size: 0.85rem;
-      padding: 0.5rem 0.75rem;
-    }
-
-    .trending-logo {
-      width: 20px;
-      height: 20px;
-    }
-
-    .main-layout {
-      flex-direction: column;
-      padding: 1rem;
-    }
-
-    .live-chart-panel {
-      position: static;
-      padding: 1rem;
-    }
-
-    .live-chart-container {
-      height: 250px;
-    }
-
-    .grid-header {
-      display: none;
-    }
-
-    .token-row {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      padding: 0.75rem;
-    }
-
-    .token-info img {
-      width: 28px;
-      height: 28px;
-    }
-
-    .token-symbol {
-      font-size: 0.85rem;
-    }
-
-    .social-icons i {
-      font-size: 1rem;
-    }
-  }
-
-  @media (max-width: 480px) {
-    body {
-      font-size: 12px;
-    }
-
-    .top-bar {
-      padding: 0.5rem;
-    }
-
-    .logo-img {
-      width: 28px;
-      height: 28px;
-    }
-
-    .logo-title {
-      font-size: 1rem;
-    }
-
-    .social-badge {
-      font-size: 0.8rem;
-      padding: 0.4rem 0.8rem;
-    }
-
-    .data-ribbon {
-      padding: 0.5rem;
-    }
-
-    .ribbon-tag {
-      font-size: 0.8rem;
-    }
-
-    .trending-token {
-      font-size: 0.8rem;
-      padding: 0.4rem 0.6rem;
-    }
-
-    .trending-logo {
-      width: 18px;
-      height: 18px;
-    }
-
-    .live-chart-container {
-      height: 200px;
-    }
-  }
   </style>
 </head>
 <body>
+
+  <!-- Background Video -->
+  <video autoplay muted loop id="bgVideo">
+    <source src="https://cdn.pixabay.com/vimeo/328940611/grass-26926.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
   <!-- Floating Particles -->
   <div class="particles" id="particles"></div>
 
-  <!-- Top Navigation Bar -->
-  <div class="top-bar">
+  <!-- Top Navigation -->
+  <div class="top-bar glass">
     <a href="index.html" class="logo-link">
-      <img src="genz.webp" class="logo-img" alt="Genz.xyz Logo">
+      <img src="genz.webp" class="logo-img" alt="Genz.xyz Logo" />
       <div class="logo-title">Genz.xyz</div>
     </a>
     <div class="nav-links">
-      
       <a href="https://x.com/DumbledoreZx" target="_blank" class="social-badge">
-        
         <span>Ahrizky</span>
       </a>
-      <a href="https:" target="_blank" class="social-badge">
+      <a href="https://t.me/yourtelegram" target="_blank" class="social-badge">
         <i class="fa-brands fa-telegram"></i>
         <span>Telegram</span>
       </a>
@@ -959,10 +99,9 @@
   </div>
 
   <!-- Trending Tokens Ribbon -->
-  <div class="data-ribbon">
+  <div class="data-ribbon glass">
     <div class="ribbon-tag">
-      <i class="fa-solid fa-fire"></i>
-      Trending
+      <i class="fa-solid fa-fire"></i> Trending
     </div>
     <div class="ribbon-container" id="trendingContainer"></div>
     <div class="slider-controls">
@@ -971,79 +110,54 @@
     </div>
   </div>
 
-  <!-- Main Content Layout -->
+  <!-- Main Layout -->
   <div class="main-layout">
-    <!-- Token Data Container -->
     <div class="container" id="tokenContainer">
       <div class="toolbar">
         <div class="filter-group">
           <button class="filter-btn active" data-filter="all">
-            <i class="fa-solid fa-fire"></i>
-            Potential Memes
+            <i class="fa-solid fa-fire"></i> Potential Memes
           </button>
           <button class="filter-btn premium" data-filter="Whale">
-            <i class="fa-solid fa-whale"></i>
-            Whale Watch
+            <i class="fa-solid fa-whale"></i> Whale Watch
             <span class="badge">1M Genz Required</span>
           </button>
           <button class="filter-btn premium" data-filter="Meme">
-            <i class="fa-solid fa-brain"></i>
-            Meme Domination
+            <i class="fa-solid fa-brain"></i> Meme Domination
             <span class="badge">2M Genz Required</span>
           </button>
           <button class="filter-btn" data-filter="pump">
-            <i class="fa-solid fa-rocket"></i>
-            New Launches on Pump.fun
+            <i class="fa-solid fa-rocket"></i> New Launches on Pump.fun
           </button>
         </div>
       </div>
 
-      <!-- Token Data Grid -->
+      <!-- Token Grid -->
       <div class="data-grid glass">
         <div class="grid-header">
           <div class="header-rank">#</div>
           <div class="header-token">Token</div>
-          <div class="header-price sortable" data-sort="price">
-            Price
-            <i class="fa-solid fa-sort"></i>
-          </div>
-          <div class="header-change sortable" data-sort="change24h">
-            24h %
-            <i class="fa-solid fa-sort"></i>
-          </div>
-          <div class="header-volume sortable" data-sort="volume">
-            24h Volume
-            <i class="fa-solid fa-sort"></i>
-          </div>
-          <div class="header-mcap sortable" data-sort="fdv">
-            Market Cap
-            <i class="fa-solid fa-sort"></i>
-          </div>
-          <div class="header-liq sortable" data-sort="liquidity">
-            Liquidity
-            <i class="fa-solid fa-sort"></i>
-          </div>
+          <div class="header-price sortable" data-sort="price">Price <i class="fa-solid fa-sort"></i></div>
+          <div class="header-change sortable" data-sort="change24h">24h % <i class="fa-solid fa-sort"></i></div>
+          <div class="header-volume sortable" data-sort="volume">24h Volume <i class="fa-solid fa-sort"></i></div>
+          <div class="header-mcap sortable" data-sort="fdv">Market Cap <i class="fa-solid fa-sort"></i></div>
+          <div class="header-liq sortable" data-sort="liquidity">Liquidity <i class="fa-solid fa-sort"></i></div>
           <div class="header-social">Social</div>
           <div class="header-chart">Chart</div>
         </div>
         <div class="grid-body" id="tierBody"></div>
       </div>
 
-      <!-- Pagination Controls -->
-      <div class="pagination" id="pagination"></div>
+      <!-- Pagination dihilangkan -->
     </div>
-
-   
+  </div>
 
   <!-- Footer -->
-  <footer class="site-footer">
+  <footer class="site-footer glass">
     <div class="footer-content">
       <div class="footer-logo">
-        <img src="genz.webp" class="footer-logo-img" alt="Genz.xyz Logo">
+        <img src="genz.webp" class="footer-logo-img" alt="Genz.xyz Logo" />
         <span class="footer-logo-text">Genz.xyz</span>
-      </div>
-      <div class="footer-links">
-        
       </div>
       <div class="footer-copyright">
         Genz.xyz screener by Ahrizky.xyz.
@@ -1052,24 +166,20 @@
   </footer>
 
   <script>
-    // Create floating particles
+    // Floating particles
     function createParticles() {
-      const particlesContainer = document.getElementById('particles');
-      const particleCount = 30;
-
-      for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.animationDelay = Math.random() * 15 + 's';
-        particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
-        particlesContainer.appendChild(particle);
+      const container = document.getElementById('particles');
+      for (let i = 0; i < 30; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.animationDelay = Math.random() * 15 + 's';
+        p.style.animationDuration = (Math.random() * 10 + 10) + 's';
+        container.appendChild(p);
       }
     }
-
-   
+    createParticles();
   </script>
   <script src="script.js"></script>
 </body>
 </html>
-
